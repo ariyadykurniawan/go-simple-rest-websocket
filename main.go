@@ -35,11 +35,8 @@ func main() {
 
 func route() {
 	myRouter := mux.NewRouter().StrictSlash(true)
-	//soal no.1
 	myRouter.HandleFunc("/messages", returnAllMessages).Methods("GET")
-	//soal no.2
 	myRouter.HandleFunc("/message", createNewMessage).Methods("POST")
-	//soal no.3
 	myRouter.HandleFunc("/message/realtime", wsEndpoint)
 	log.Fatal(http.ListenAndServe(":8080", myRouter))
 }
