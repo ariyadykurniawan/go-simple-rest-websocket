@@ -54,13 +54,24 @@ func returnAllMessages(w http.ResponseWriter, r *http.Request) {
 
 func createNewMessage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: createNewMessage")
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	var message Message
-	json.Unmarshal(reqBody, &message)
-	Messages = append(Messages, message.Content)
+	reqBody, err := ioutil.ReadAll(r.Body)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(message)
+	if err != nil {
+		http.Error(w, "Invalid Body Request", http.StatusBadRequest)
+	}
+
+	var message Message
+
+	if err = json.Unmarshal(reqBody, &message); err != nil {
+		http.Error(w, "Invalid JSON Request", http.StatusBadRequest)
+	} else {
+
+		Messages = append(Messages, message.Content)
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(message)
+
+	}
 }
 
 func wsEndpoint(w http.ResponseWriter, r *http.Request) {
